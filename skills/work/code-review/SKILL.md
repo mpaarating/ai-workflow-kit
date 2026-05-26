@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Multi-persona code review with Architect and Nitpicker perspectives
+description: Multi-persona code review of the current branch — Architect (system fit, patterns, reuse) + Nitpicker (naming, magic values, dead code). Runs in parallel and merges.
 ---
 
 # Code Review
@@ -12,134 +12,48 @@ description: Multi-persona code review with Architect and Nitpicker perspectives
 - "review my code"
 - "review my changes"
 
-## Inputs
-
-No input required. The skill reviews the current branch's changes against the base branch.
-
-Optional inputs:
-- A specific base branch: "review my code against develop"
-- A file filter: "review just the test files"
-- A focus area: "review with focus on naming" or "review the architecture"
+Optional modifiers: "against develop", "just the test files", "focus on architecture".
 
 ## Workflow
 
-### Step 1: Gather the Diff
+1. Diff the current branch against the base branch (default `main`, fall back to `master`). If no changes, stop and say so. If the diff is huge (50+ files / 2000+ lines), offer to review a subset first.
 
-Using local git commands:
+2. Run two personas in parallel:
+   - **Architect** — pattern consistency, reuse, simplification, abstraction level, responsibility, dependency injection, dependency direction, API design. Full persona: `shared/personas/architect.md`. Prefix findings with `Arch:`.
+   - **Nitpicker** — naming, boolean naming, test naming, comment quality, magic values, dead code, consistent patterns, variable clustering. Full persona: `shared/personas/nitpicker.md`. Prefix findings with `Nit:`.
 
-1. Identify the current branch name: `git branch --show-current`
-2. Identify the base branch (default: `main`): check if `main` exists, fall back to `master`
-3. Get the full diff: `git diff [base]...HEAD`
-4. List changed files: `git diff --name-only [base]...HEAD`
-5. Get a stat summary: `git diff --stat [base]...HEAD`
+   Each finding is tagged with a focus area and rated High / Medium / Low. Every finding includes a concrete suggestion.
 
-If there are no changes, tell the user: "No changes found against [base]. Are you on the right branch?"
+3. Merge: deduplicate, sort High → Low, group by file. Cap at 15 issues; note any omitted minor items.
 
-If the diff is very large (50+ files or 2000+ lines changed), warn the user and offer to review a subset (e.g., by directory or file type).
+4. Report. Lead with what's good. State explicitly when there are no High issues. Then offer to fix auto-fixable items (naming, magic values) or refocus on a specific file.
 
-### Step 2: Run Reviews in Parallel
+## Modifiers
 
-Run two review perspectives simultaneously. Each persona is defined in a shared file — read the persona definition before starting the review.
+- "against `<branch>`" — diff against that branch instead of the default
+- "just the test files" — filter the diff to `*.test.*` / `*.spec.*`; Nitpicker's TestNaming focus becomes primary
+- "focus on architecture" / "focus on nits" — run only one persona
 
-#### Architect Review
-
-Read `shared/personas/architect.md` for the full persona definition.
-
-Focus areas:
-- **Pattern Consistency**: Does the code follow established patterns in the codebase?
-- **Reusability**: Is there existing code that should be reused?
-- **Simplification**: Is there a simpler approach?
-- **Abstraction Level**: Right level of abstraction for the use case?
-- **Responsibility**: Single responsibility per function/class?
-- **Dependency Injection**: Dependencies injectable and testable?
-- **Dependency Direction**: Dependencies flowing correctly?
-- **API Design**: Public interfaces intuitive and consistent?
-
-Review the diff and identify issues. For each issue:
-- Prefix with `Arch:`
-- Tag the focus area: `[PatternConsistency]`, `[Reusability]`, etc.
-- Rate importance: High, Medium, or Low
-- Include a specific suggestion or question
-
-#### Nitpicker Review
-
-Read `shared/personas/nitpicker.md` for the full persona definition.
-
-Focus areas:
-- **Naming**: Precise, intention-revealing, consistent names?
-- **Boolean Naming**: Booleans read as yes/no questions?
-- **Test Naming**: Test names describe scenario and outcome?
-- **Comment Quality**: Comments explain why, not what?
-- **Magic Values**: No unexplained literals?
-- **Dead Code**: No commented-out code, stale TODOs, debug statements?
-- **Consistent Patterns**: Similar operations follow similar patterns?
-- **Variable Clustering**: Related variables grouped together?
-
-Review the diff and identify issues. For each issue:
-- Prefix with `Nit:`
-- Tag the focus area: `[Naming]`, `[MagicValues]`, etc.
-- Rate importance: High, Medium, or Low
-- Include a concrete fix suggestion
-
-### Step 3: Merge and Deduplicate
-
-Combine findings from both perspectives.
-
-- Remove duplicates (same issue flagged by both personas — keep the more detailed one)
-- Sort by importance: High first, then Medium, then Low
-- Group by file for readability
-
-### Step 4: Write the Review Report
-
-Present findings in this format:
+## Report Format
 
 ```
-## Code Review: [branch-name]
-**Files changed**: [count] | **Lines**: +[added] / -[removed]
+## Code Review: [branch]
+Files: [n] | Lines: +[added] / -[removed]
 
-### High Priority
-[Issues that should be addressed before merging]
+### High
+[blocking issues]
 
-### Medium Priority
-[Issues worth addressing but not blocking]
+### Medium
+[worth addressing]
 
-### Low Priority
-[Polish items — address if time permits]
+### Low
+[polish]
 
 ### Summary
-[2-3 sentence overview: what's good about the changes, what needs attention]
+[2-3 sentences: what's good, what needs attention]
 ```
-
-Rules for the report:
-- Lead with what's good. Acknowledge solid work before listing issues
-- Every issue must have a concrete suggestion, not just criticism
-- If there are no High issues, say so explicitly — that's a good sign
-- Cap the report at 15 issues. If there are more, prioritize and note "additional minor items omitted"
-
-### Step 5: Offer Next Steps
-
-After presenting the review, offer:
-- "Want me to fix any of these?" (for auto-fixable issues like naming, magic values)
-- "Want me to focus on a specific file or area?"
 
 ## Notes
 
-- This skill uses local git commands only. It does not interact with any git hosting platform
-- The skill reviews code, not commits. It looks at the total diff, not individual commit messages
-- For large diffs, suggest reviewing in chunks rather than skipping the review entirely
-- If persona files (`shared/personas/architect.md`, `shared/personas/nitpicker.md`) are not found, use the focus areas listed in Step 2 as the review criteria
-- If the user asks to focus on just one perspective ("review the architecture only"), run only that persona
-
-## Examples
-
-**User**: "code review"
-**Action**: Diff current branch against main. Run Architect and Nitpicker reviews in parallel. Present merged findings sorted by priority.
-
-**User**: "review my code against develop"
-**Action**: Same flow, but diff against `develop` instead of `main`.
-
-**User**: "review just the test files"
-**Action**: Filter the diff to only `*.test.*` and `*.spec.*` files. Run both reviews on the filtered set. Nitpicker's TestNaming focus becomes especially relevant.
-
-**User**: "review with focus on architecture"
-**Action**: Run only the Architect perspective. Skip Nitpicker. Present findings focused on patterns, abstractions, and dependencies.
+- Uses local git only. No platform integration.
+- If persona files are missing, use the focus areas above as the review criteria.

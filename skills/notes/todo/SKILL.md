@@ -1,104 +1,44 @@
 ---
 name: todo
-description: Quick task capture with priority detection and batch support
+description: Quick task capture with priority detection, due-date parsing, and batch support. One task or many.
 ---
 
 # Todo
 
-Capture tasks fast. One task or many, with smart priority and due date detection.
-
 ## Trigger Phrases
 
-- "todo:"
-- "remind me to"
-- "need to"
-- "don't forget to"
-- "add task:"
+- "todo: [text]"
+- "remind me to [...]"
+- "need to [...]"
+- "don't forget to [...]"
+- "add task: [text]"
 
 ## Workflow
 
-### Step 1: Parse Input
+1. **Parse input.** Single or batch. Split on commas or newlines when multiple tasks are present:
+   - `todo: buy groceries` → one task
+   - `todo: buy groceries, call dentist, review PR` → three tasks
 
-Extract task(s) from the user's message. Handle both single and batch input.
+2. **Detect priority** per task. Strip the priority keyword from the task text after detection.
 
-- **Single**: `todo: buy groceries` → one task
-- **Batch**: `todo: buy groceries, call dentist, review PR` → three tasks
-- Split on commas or newlines when multiple tasks are present
+   | Signal | Priority |
+   |--------|----------|
+   | "urgent", "asap", "critical", "today" | High |
+   | "soon", "this week", "important" | Medium |
+   | Everything else | Low |
 
-### Step 2: Detect Priority
+3. **Detect due date.** Explicit ("by Friday", "due March 20") or relative ("tomorrow", "next Monday") — resolve to an absolute date. If no date, leave blank.
 
-Scan each task for priority signals:
+4. **Save to {{tasks}}** with fields: Task, Priority, Due Date, Status (default: Open). If {{tasks}} isn't configured, append to `~/.ai-workflow/todos.md`:
 
-| Signal | Priority |
-|--------|----------|
-| "urgent", "asap", "critical", "today" | High |
-| "soon", "this week", "important" | Medium |
-| Everything else | Low |
+   ```
+   - [ ] Buy groceries | Priority: Low | Due: —
+   - [ ] Call dentist | Priority: Medium | Due: 2026-03-21
+   ```
 
-Strip priority keywords from the task text after detection.
+5. **Confirm one line per task.** No extra commentary.
 
-### Step 3: Detect Due Date
-
-Look for date references:
-
-- Explicit: "by Friday", "due March 20", "before 5pm"
-- Relative: "today", "tomorrow", "this week", "next Monday"
-- Convert to an actual date based on the current date
-- If no date found, leave blank
-
-### Step 4: Save
-
-Add task(s) to the user's task system.
-
-**Using {{notes}}**: Create or append to a tasks page/database with fields: Task, Priority, Due Date, Status (default: Open).
-
-**Markdown fallback**: Append to `~/.ai-workflow/todos.md`:
-
-```markdown
-- [ ] Buy groceries | Priority: Low | Due: —
-- [ ] Call dentist | Priority: Medium | Due: 2026-03-21
-```
-
-### Step 5: Confirm
-
-Respond with a single confirmation line per task:
-
-```
-Added: "Buy groceries" (low)
-Added: "Call dentist" (medium, due Fri Mar 21)
-Added: "Review PR" (low)
-```
-
-Keep it to one line per task. No extra commentary.
-
-## Examples
-
-**Single task:**
-> todo: schedule haircut
-
-```
-Added: "Schedule haircut" (low)
-```
-
-**With priority signal:**
-> remind me to file taxes asap
-
-```
-Added: "File taxes" (high)
-```
-
-**Batch:**
-> todo: buy groceries, call dentist by Friday, review PR
-
-```
-Added: "Buy groceries" (low)
-Added: "Call dentist" (medium, due Fri Mar 21)
-Added: "Review PR" (low)
-```
-
-**With due date:**
-> don't forget to renew passport by next month
-
-```
-Added: "Renew passport" (low, due Apr 19)
-```
+   ```
+   Added: "Buy groceries" (low)
+   Added: "Call dentist" (medium, due Fri Mar 21)
+   ```

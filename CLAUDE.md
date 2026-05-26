@@ -24,3 +24,7 @@ Each bucket folder has a `README.md` that lists every skill in the bucket with a
 Skills reference the integration layer using `{{notes}}`, `{{tasks}}`, `{{calendar}}`, `{{chat}}` placeholders rather than specific services (Notion, Jira, Slack, etc.). The active integration is configured in `integrations/active.md`.
 
 Shared language for skills (daily page, focus areas, working notes, capture vs. save, etc.) is defined in `CONTEXT.md`.
+
+## Skill style
+
+Skills should be short and composable — closer to 30–60 lines than 100+. Each skill: frontmatter, trigger phrases, a numbered workflow, and minimal Notes. Drop `## Examples` unless a worked example is the only way to communicate the expected output shape. `skills/work/code-review/SKILL.md` is a good reference for the target shape.

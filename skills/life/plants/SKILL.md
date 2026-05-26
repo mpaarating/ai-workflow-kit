@@ -1,102 +1,54 @@
 ---
 name: plants
-description: Track houseplants — watering, status, and care needs
+description: Track houseplants — watering schedule, status, and care needs. One skill, multiple modes (check, log, add, update).
 ---
 
 # Plants
 
-Keep your houseplants alive. Track watering, status, and care needs in one place.
-
 ## Trigger Phrases
 
-- "water plants"
-- "plant update"
-- "plant check"
-- "how are my plants"
+- "how are my plants" / "plant check"
+- "water plants" / "watered [plant]"
 - "new plant: [name]"
+- "plant update" / "[plant] is [status]"
 
 ## Workflow
 
-### On "plant check" / "how are my plants"
+Pick the mode based on the trigger.
 
-Read the plant database and display a status table:
+### Mode: status check ("how are my plants")
+
+Read the plant database from {{notes}} (fallback: `~/.ai-workflow/plants.md`) and display:
 
 ```
-| Plant          | Status     | Last Watered | Water Needs | Light   |
-|----------------|------------|--------------|-------------|---------|
-| Pothos         | Thriving   | Mar 17       | Weekly      | Low     |
-| Fiddle Leaf    | Struggling | Mar 10       | Biweekly    | Bright  |
-| Snake Plant    | Healthy    | Mar 15       | Monthly     | Any     |
+| Plant       | Status     | Last Watered | Water Needs | Light  |
+|-------------|------------|--------------|-------------|--------|
+| Pothos      | Thriving   | Mar 17       | Weekly      | Low    |
+| Fiddle Leaf | Struggling | Mar 10       | Biweekly    | Bright |
 ```
 
-Flag any plants that are overdue for watering based on their schedule and last watered date.
+Flag plants overdue for watering based on schedule + last watered.
 
-### On "water plants" / "watered [plant]"
+### Mode: log watering ("water plants" / "watered Pothos")
 
-Update the "Last Watered" date for the specified plant(s) to today.
+Update Last Watered to today for the named plant(s). If no plant named, ask: "Which plants did you water? Or all of them?" Confirm: `Logged: Watered Pothos, Snake Plant (Mar 19)`.
 
-- If no specific plant named, ask: "Which plants did you water? Or all of them?"
-- If "all", update every plant
-- Confirm: `Logged: Watered Pothos, Snake Plant (Mar 19)`
+### Mode: add ("new plant: monstera")
 
-### On "new plant: [name]"
-
-Add a new plant to the database. Ask for (or infer from the plant name):
-
-- **Water needs**: Weekly, Biweekly, Monthly
-- **Light needs**: Low, Medium, Bright, Any
-- **Pet-friendly**: Yes/No
-
-Set initial status to "New" and last watered to today.
-
-If the user provides just a name, look up common care requirements for that plant species and suggest defaults. Confirm before saving.
+Ask for (or infer) Water Needs (Weekly / Biweekly / Monthly), Light (Low / Medium / Bright / Any), Pet-friendly (Y/N). Status defaults to **New**, Last Watered to today. If the user gives just a name, look up common care defaults and confirm before saving.
 
 ```
 Added: "Monstera" — Bright light, weekly water, not pet-friendly. Status: New
 ```
 
-### On "plant update" / status change
+### Mode: status update ("fiddle leaf is struggling")
 
-Update a plant's status. Valid statuses:
-
-- **Thriving** — Growing well, new leaves
-- **Healthy** — Normal, no concerns
-- **Struggling** — Yellowing, drooping, pests
-- **New** — Recently acquired
-
-Ask what changed if not specified. Update the record and confirm.
-
-### Storage
-
-**Using {{notes}}**: Store as a database/table with columns: Name, Status, Water Needs, Light Needs, Last Watered, Next Repot, Pet-Friendly.
-
-**Markdown fallback**: Store in `~/.ai-workflow/plants.md` as a markdown table.
-
-## Examples
-
-**Check status:**
-> how are my plants
-
-Displays the status table. Flags: "Fiddle Leaf is 9 days overdue for watering (biweekly schedule)."
-
-**Log watering:**
-> watered the pothos and snake plant
-
-```
-Logged: Watered Pothos, Snake Plant (Mar 19)
-```
-
-**Add new plant:**
-> new plant: monstera
-
-```
-Monstera — common care: bright indirect light, water weekly, not pet-friendly.
-Sound right? (yes / adjust)
-```
-
-**Update status:**
-> fiddle leaf is looking rough, yellowing leaves
+Valid statuses: **Thriving** / **Healthy** / **Struggling** / **New**. Update the record and confirm.
 
 ```
 Updated: Fiddle Leaf → Struggling. Notes: yellowing leaves.
 ```
+
+## Storage
+
+{{notes}} as a database/table: Name, Status, Water Needs, Light Needs, Last Watered, Next Repot, Pet-Friendly. Fallback: a markdown table in `~/.ai-workflow/plants.md`.

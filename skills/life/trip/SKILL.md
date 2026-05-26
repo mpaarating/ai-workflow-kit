@@ -1,11 +1,9 @@
 ---
 name: trip
-description: Trip planning with day-by-day itineraries and local recommendations
+description: Plan trips with day-by-day itineraries, food recommendations, and logistics. Iteratively refines until it feels right.
 ---
 
 # Trip
-
-Plan trips with day-by-day itineraries, food recommendations, and logistics. Iteratively refine until it feels right.
 
 ## Trigger Phrases
 
@@ -16,94 +14,31 @@ Plan trips with day-by-day itineraries, food recommendations, and logistics. Ite
 
 ## Workflow
 
-### Step 1: Gather Basics
+1. **Gather basics** from the user's message (or ask): destination, dates or duration, travelers (solo / couple / family / group).
 
-Extract from the user's message or ask:
+2. **Ask preferences in one quick prompt** — skip if the user already gave them upfront:
+   - **Pace**: packed vs. relaxed
+   - **Vibe**: adventure / culture / food / relaxation / nightlife / nature
+   - **Budget**: budget / mid-range / splurge
+   - **Must-dos or must-avoids**
 
-- **Destination**
-- **Dates** (or duration: "5 days in October")
-- **Travelers** (solo, couple, family, group)
+3. **Generate the day-by-day itinerary.** Each day has Morning / Afternoon / Evening blocks with specific place names, neighborhoods, restaurants, and practical notes (how to get there, time estimates, reservation tips). One food recommendation per meal slot.
 
-### Step 2: Ask Preferences
+   ```
+   ### Day 1: [Theme]
+   **Morning**: [Activity] — [details, location]
+   **Lunch**: [Restaurant/area] — [what it's known for]
+   **Afternoon**: [Activity]
+   **Dinner**: [Restaurant/area]
+   **Evening**: [Optional activity or downtime]
+   ```
 
-Before generating the itinerary, ask about (keep it to one quick question):
+4. **Add a logistics section** after the itinerary:
+   - **Getting around** — best transport (metro, rideshare, walking, rental)
+   - **Where to stay** — 2–3 neighborhood options with trade-offs (central / budget / vibe)
+   - **Practical tips** — currency, tipping, language basics, safety
+   - **Packing notes** — weather-specific or activity-specific
 
-- **Pace**: Packed schedule vs. relaxed with downtime
-- **Vibe**: Adventure, culture, food, relaxation, nightlife, nature
-- **Budget**: Budget-friendly, mid-range, or splurge
-- **Interests**: Any must-dos or must-avoids
+5. **Save** to {{notes}} as a page titled `[Destination] Trip — [Dates]`. Fallback: `~/.ai-workflow/trips/[destination]-[date].md`.
 
-If the user already provided preferences in their initial message, skip this step.
-
-### Step 3: Generate Itinerary
-
-Create a day-by-day plan. For each day include:
-
-- **Morning / Afternoon / Evening** blocks
-- Specific place names (neighborhoods, landmarks, restaurants)
-- Practical notes: how to get there, estimated time, reservation tips
-- One food recommendation per meal slot
-
-Structure:
-
-```
-### Day 1: [Theme — e.g., "Historic Center"]
-**Morning**: [Activity] — [details, location]
-**Lunch**: [Restaurant/area] — [what it's known for]
-**Afternoon**: [Activity]
-**Dinner**: [Restaurant/area]
-**Evening**: [Optional activity or downtime]
-```
-
-### Step 4: Add Logistics Section
-
-After the itinerary, include:
-
-- **Getting around**: Best transport options (metro, rideshare, walking, rental car)
-- **Neighborhoods to stay in**: 2-3 options with trade-offs (central vs. budget vs. vibe)
-- **Practical tips**: Currency, tipping norms, language basics, safety notes
-- **Packing notes**: Weather-specific or activity-specific gear
-
-### Step 5: Save
-
-Save the complete plan.
-
-**Using {{notes}}**: Create a page titled "[Destination] Trip — [Dates]" with the full itinerary.
-
-**Markdown fallback**: Save to `~/.ai-workflow/trips/[destination]-[date].md`.
-
-### Step 6: Iterate
-
-After presenting the plan, ask: "Want to adjust anything — swap days, add rest time, more food spots?"
-
-Accept refinements and update the saved plan. Common adjustments:
-
-- Swap out activities
-- Add more/fewer restaurant recommendations
-- Shift pace (more downtime, more sightseeing)
-- Add a day trip to a nearby town
-
-## Examples
-
-**Start planning:**
-> trip to Lisbon, 4 days in May
-
-```
-Nice — Lisbon in May is great weather. Quick question before I build the itinerary:
-What's your vibe? (adventure / food-focused / culture / relaxed mix)
-```
-
-**With preferences upfront:**
-> plan a 5-day trip to Tokyo, food-focused, moderate budget, first time visiting
-
-Generates a full 5-day itinerary focused on food neighborhoods (Tsukiji, Shinjuku, Shibuya), includes ramen rankings, izakaya recommendations, and a day trip to Kamakura.
-
-**Refine:**
-> day 3 looks too packed, can we swap the temple visit for free time?
-
-Updates Day 3 with a lighter schedule and re-saves the plan.
-
-**Quick trip:**
-> weekend trip to Portland
-
-Generates a 2-day plan with breweries, Powell's Books, food carts, and neighborhood walking routes.
+6. **Iterate.** After presenting, ask: "Want to adjust anything — swap days, add rest time, more food spots?" Accept refinements (swap activities, shift pace, add a day trip) and update the saved plan.

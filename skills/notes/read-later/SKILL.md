@@ -1,99 +1,49 @@
 ---
 name: read-later
-description: Save articles with AI-generated summaries and category tags
+description: Save articles to a reading list with a short AI-generated summary and a category tag. Never lose an interesting link again.
 ---
 
 # Read Later
 
-Save articles to your reading list with a short summary and category tag. Never lose an interesting link again.
-
 ## Trigger Phrases
 
-- "read later:"
-- "save article"
-- "interesting:"
-- "read this:"
+- "read later: [url]"
+- "save article [url]"
+- "interesting: [url]"
+- "read this: [url]"
 
 ## Workflow
 
-### Step 1: Extract URL
+1. **Extract the URL** from the user's message. If none provided, ask for one.
 
-Parse the URL from the user's message. If no URL is provided, ask for one.
+2. **Fetch the article** — extract title, author, publication date, and body. Strip nav, ads, boilerplate. If fetching fails (paywall, 404, timeout), save with just the URL and link text, and note "Could not fetch full content."
 
-### Step 2: Fetch Article
+3. **Write a 3–4 sentence summary**: what the article is about (1 sentence), the key insight or argument (1–2 sentences), why it matters or who it's useful for (1 sentence). Factual, no editorializing.
 
-Fetch the page content and extract the article body, title, author, and publication date. Strip navigation, ads, and boilerplate.
+4. **Assign one category tag** based on content:
 
-If fetching fails (paywall, 404, timeout), save with just the URL and title from the link text. Note: "Could not fetch full content."
+   | Category | Signals |
+   |----------|---------|
+   | AI | Machine learning, LLMs, AI tools, agents |
+   | Web Dev | Frontend, backend, frameworks, APIs |
+   | DevOps | Infrastructure, CI/CD, deployment, monitoring |
+   | Career | Growth, management, interviewing, culture |
+   | General | Everything else |
 
-### Step 3: Generate Summary
+5. **Save to {{notes}}** with fields: Title, URL, Summary, Category, Date Saved, Status (Unread). Fallback if unconfigured — append to `~/.ai-workflow/reading-list.md`:
 
-Write a 3-4 sentence summary of the article. Focus on:
+   ```markdown
+   ## [Article Title](https://example.com/article)
+   - **Saved**: 2026-03-19
+   - **Category**: AI
+   - **Status**: Unread
 
-- What the article is about (one sentence)
-- The key insight or argument (one-two sentences)
-- Why it matters or who it's useful for (one sentence)
+   Summary text here.
+   ```
 
-Keep the summary factual. Don't editorialize.
+6. **Confirm briefly**:
 
-### Step 4: Categorize
-
-Assign one category tag based on the content:
-
-| Category | Signals |
-|----------|---------|
-| AI | Machine learning, LLMs, AI tools, agents |
-| Web Dev | Frontend, backend, frameworks, APIs |
-| DevOps | Infrastructure, CI/CD, deployment, monitoring |
-| Career | Growth, management, interviewing, culture |
-| General | Everything else |
-
-### Step 5: Save
-
-Add to the reading list.
-
-**Using {{notes}}**: Create an entry with fields: Title, URL, Summary, Category, Date Saved, Status (Unread).
-
-**Markdown fallback**: Append to `~/.ai-workflow/reading-list.md`:
-
-```markdown
-## [Article Title](https://example.com/article)
-- **Saved**: 2026-03-19
-- **Category**: AI
-- **Status**: Unread
-
-Summary text here.
-
----
-```
-
-### Step 6: Confirm
-
-Respond with a brief confirmation:
-
-```
-Saved: "Building Agents That Actually Work" (AI)
-> 3-sentence summary here.
-```
-
-## Examples
-
-**Save from URL:**
-> read later: https://example.com/great-article
-
-```
-Saved: "Great Article Title" (Web Dev)
-> The article covers new patterns for server components in React 19.
-> Key insight: streaming SSR reduces TTFB by 40% in benchmarks.
-> Useful for frontend engineers migrating from client-side rendering.
-```
-
-**Quick save:**
-> interesting: https://example.com/ai-agents-2026
-
-```
-Saved: "AI Agents in 2026: What Changed" (AI)
-> Overview of how agent architectures evolved over the past year.
-> Main argument: tool-use reliability matters more than model size.
-> Good context for anyone building or evaluating AI tooling.
-```
+   ```
+   Saved: "Title" (Category)
+   > 3-sentence summary.
+   ```

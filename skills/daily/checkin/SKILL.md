@@ -1,6 +1,6 @@
 ---
 name: checkin
-description: Midday progress check — compare morning plan to actual work, surface pivots, refocus the afternoon
+description: Midday progress check — compares morning plan to actual work, surfaces pivots, refocuses the afternoon. Should take under 2 minutes.
 ---
 
 # Midday Check-in
@@ -9,108 +9,40 @@ description: Midday progress check — compare morning plan to actual work, surf
 
 - "checkin"
 - "midday checkin"
-- "midday check-in"
 - "afternoon checkin"
 - "how's my day going"
 
 ## Workflow
 
-### Step 1: Read Today's Daily Page
+1. **Read today's daily page** from {{notes}}. Pull Focus Areas and any Working Notes added during the morning. If no page exists, suggest **morning-kickoff** first.
 
-Fetch today's daily page from {{notes}}.
+2. **Assess progress** on each focus area: Done / In Progress / Not Started. Present as a checklist for the user to confirm or correct.
 
-- If no daily page exists, tell the user and offer to run **morning-kickoff** first.
-- Extract the Focus Areas section (the morning plan).
-- Read any Working Notes added during the morning.
+3. **Detect pivots.** If work in Working Notes doesn't align with morning priorities, flag it neutrally — pivots aren't bad, but they need to be visible so the afternoon can be re-planned. Example phrasing:
 
-### Step 2: Assess Progress on Focus Areas
+   > "Looks like you spent the morning on [X] instead of [planned item]. Intentional pivot or got pulled in?"
 
-For each item in the morning Focus Areas, determine status:
+4. **Show what's left.** Query {{calendar}} for remaining events. Compute remaining deep work hours (time left in the workday − remaining meeting time). If {{calendar}} isn't configured, ask how many meetings are left.
 
-- **Done**: Completed since the morning.
-- **In Progress**: Actively being worked on.
-- **Not Started**: Hasn't been touched yet.
+5. **Collect a one-sentence reflection** with a lightweight prompt: "Energy?" / "One thing you want done before EOD?" / "Anything blocking you?"
 
-Present as a checklist so the user can quickly confirm or correct.
+6. **Append a midday note** to Working Notes:
 
-### Step 3: Detect Pivots
+   ```
+   ### Midday Check-in ([time])
+   **Progress:**
+   - [x] [Focus item 1] — done
+   - [ ] [Focus item 2] — in progress
+   - [ ] [Focus item 3] — not started
 
-Compare the morning plan to the Working Notes content and ask the user what they've actually been doing.
+   **Pivot:** [description, if any]
+   **Afternoon plan:** [adjusted priorities]
+   **Note:** [user's reflection]
+   ```
 
-If work doesn't align with morning priorities, flag it neutrally:
-
-> "Looks like you spent the morning on [X] instead of [planned item]. Intentional pivot or got pulled in?"
-
-Pivots aren't bad — they just need to be acknowledged so the afternoon can be re-planned.
-
-### Step 4: Show Remaining Schedule
-
-Query {{calendar}} for events in the remainder of today.
-
-- List upcoming meetings with times.
-- Calculate remaining deep work hours: time left in the workday minus remaining meeting time.
-
-If {{calendar}} is not configured, ask the user how many meetings they have left.
-
-### Step 5: Collect Reflection
-
-Ask the user for a brief midday reflection. Prompt with one of these:
-
-- "How's your energy? Anything you want to adjust for the afternoon?"
-- "What's the one thing you want to make sure gets done before EOD?"
-- "Anything blocking you right now?"
-
-Keep it lightweight — one or two sentences is fine.
-
-### Step 6: Update the Daily Page
-
-Add a timestamped midday note to the Working Notes section of today's page in {{notes}}.
-
-Format:
-
-```
-### Midday Check-in ([time])
-**Progress:**
-- [x] [Focus item 1] — done
-- [ ] [Focus item 2] — in progress
-- [ ] [Focus item 3] — not started
-
-**Pivot:** [description, if any]
-
-**Afternoon plan:** [adjusted priorities based on remaining time]
-
-**Note:** [user's reflection]
-```
-
-### Step 7: Summarize
-
-Print a brief summary:
-- Progress snapshot (e.g., "1 of 3 focus items done")
-- Remaining deep work hours
-- Adjusted top priority for the afternoon
+7. **Summarize**: progress snapshot ("1 of 3 done"), remaining deep work hours, the one thing for the afternoon. If the page looks messy or stale, suggest **tend**.
 
 ## Notes
 
-- This skill reads the page created by **morning-kickoff** and adds to it.
-- Keep the check-in fast — it should take under 2 minutes.
+- Reads what **morning-kickoff** wrote; appends to the same page.
 - Don't judge pivots. The goal is awareness, not guilt.
-- If {{calendar}} is not configured, skip schedule lookup and just ask about remaining time.
-
-## Examples
-
-**User**: "checkin"
-
-**Assistant**: Here's where you're at:
-
-**Morning focus areas:**
-- [x] Auth migration — done (nice!)
-- [ ] PR #482 review — in progress (comments posted, waiting on response)
-- [ ] 1:1 prep — not started
-
-You have 2 meetings this afternoon (1.5h), leaving about 2.5h of deep work.
-
-What's the top priority for this afternoon — finishing the PR review or prepping for the 1:1?
-
-**User**: "PR review, the 1:1 got moved"
-
-**Assistant**: Got it. I've added a midday note to your daily page with the updated plan. The 1:1 prep moves to tomorrow's carry-forward.
