@@ -15,7 +15,16 @@ Every skill in `daily/`, `notes/`, `work/`, `life/`, or `meta/` must have:
 - An entry in `.claude-plugin/plugin.json`
 - A one-line description in its bucket's `README.md`
 
-Skills in `personal/`, `in-progress/`, and `deprecated/` must NOT appear in any of those three places.
+Skills in `personal/`, `in-progress/`, and `deprecated/` must NOT appear in any of those three places. They must also add `metadata.internal: true` to their YAML frontmatter so [skills.sh](https://skills.sh) hides them from `npx skills add ... --list` and from the public leaderboard:
+
+```yaml
+---
+name: my-internal-skill
+description: ...
+metadata:
+  internal: true
+---
+```
 
 Each skill entry in the top-level `README.md` must link the skill name to its `SKILL.md`.
 

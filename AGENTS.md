@@ -2,6 +2,8 @@
 
 This repository contains workflow automation skills for AI coding assistants. Skills automate the non-coding parts of an engineer's day: morning planning, EOD reviews, meeting prep, standups, journaling, and more.
 
+Install via [skills.sh](https://skills.sh): `npx skills@latest add mpaarating/ai-workflow-kit`. After install, run `/setup-workflow-kit` inside your agent to configure backends.
+
 ## How to Use Skills
 
 Skills live in `skills/<bucket>/<skill-name>/SKILL.md`. Each skill has trigger phrases and a workflow. When the user says a trigger phrase (e.g., "good morning", "eod review", "standup"), execute the matching skill.

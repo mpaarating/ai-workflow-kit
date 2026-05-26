@@ -1,5 +1,7 @@
 # AI Workflow Kit
 
+[![skills.sh](https://skills.sh/b/mpaarating/ai-workflow-kit)](https://skills.sh/mpaarating/ai-workflow-kit)
+
 Agent skills for the non-coding half of your job.
 
 Most of the productivity gap in an engineer's day isn't writing code. It's the connective tissue around it — context-gathering, captures that never get captured, daily plans that never get reviewed, half-finished thoughts lost between sessions. These tasks take 15 minutes each and get perpetually deferred.
@@ -9,14 +11,18 @@ This kit is the set of small, composable skills I run every day to close that ga
 ## Quickstart (30 seconds)
 
 ```bash
-git clone https://github.com/mpaarating/ai-workflow-kit.git
-cd ai-workflow-kit
-./setup.sh
+npx skills@latest add mpaarating/ai-workflow-kit
 ```
 
-The setup script symlinks skills into your agent's skills directory and asks which backends you use (notes, tasks, calendar, chat). For Claude Code, you can also run `/setup-workflow-kit` from inside the agent to do the same configuration interactively.
+The installer detects your agent (Claude Code, Codex, Cursor, OpenCode, and [50+ others](https://github.com/vercel-labs/skills#supported-agents)) and symlinks the skills in. Pick which skills to install and which agents to install them into when prompted, then run the setup skill from inside your agent:
 
-After install:
+```
+/setup-workflow-kit
+```
+
+That asks which backends you use (notes, tasks, calendar, chat) and writes `integrations/active.md` so every other skill resolves the integration layer correctly.
+
+After setup:
 
 ```
 /morning-kickoff       # at the start of your day
@@ -25,6 +31,33 @@ After install:
 /tend                  # mid-afternoon
 /eod-review            # before signing off
 /capture: "..."        # whenever a thought needs to land
+```
+
+### Install options
+
+```bash
+# List skills in this repo before installing
+npx skills add mpaarating/ai-workflow-kit --list
+
+# Install only specific skills
+npx skills add mpaarating/ai-workflow-kit --skill morning-kickoff --skill capture
+
+# Install to a specific agent
+npx skills add mpaarating/ai-workflow-kit -a claude-code
+
+# Install globally (across all your projects)
+npx skills add mpaarating/ai-workflow-kit -g
+
+# Non-interactive (CI-friendly)
+npx skills add mpaarating/ai-workflow-kit --all -y
+```
+
+### Manual install (for agents not in the skills.sh registry)
+
+```bash
+git clone https://github.com/mpaarating/ai-workflow-kit.git
+cd ai-workflow-kit
+./setup.sh
 ```
 
 ## Why These Skills Exist
