@@ -1,0 +1,24 @@
+{
+  "name": "ai-workflow-kit",
+  "skills": [
+    "./skills/daily/morning-kickoff",
+    "./skills/daily/top-priority",
+    "./skills/daily/checkin",
+    "./skills/daily/tend",
+    "./skills/daily/eod-review",
+    "./skills/notes/capture",
+    "./skills/notes/save",
+    "./skills/notes/journal",
+    "./skills/notes/todo",
+    "./skills/notes/read-later",
+    "./skills/work/standup",
+    "./skills/work/meeting-prep",
+    "./skills/work/code-review",
+    "./skills/work/research",
+    "./skills/life/plants",
+    "./skills/life/recipe",
+    "./skills/life/watchlist",
+    "./skills/life/trip",
+    "./skills/meta/setup-workflow-kit"
+  ]
+}
